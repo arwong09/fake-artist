@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <div id="serverData">Here is where the server sent data will appear</div>
+        <script type="text/javascript">
+          //check for browser support
+          if(typeof(EventSource)!=="undefined") {
+            var eSource = new EventSource("http://localhost:3000/start");
+
+            eSource.onmessage = function(event) {
+              console.log("message received")
+              document.getElementById("serverData").innerHTML = event.data;
+            };
+          }
+          else {
+            document.getElementById("serverData").innerHTML="Whoops! Your browser doesn't receive server-sent events.";
+          }
+        </script>
+    </body>
+</html>

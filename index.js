@@ -55,13 +55,13 @@ class User {
 /*
  * Server
  */
-console.log('test')
-var express = require('express')
-var app = express()
-var port = 3000
+
+var express = require('express'),
+  path = require('path'),
+  app = express(),
+  port = 3000
 
 app.use(express.json()) // for parsing application/json
-app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
 // var game = new Game()
 
@@ -80,13 +80,20 @@ app.post('/join', function (req, res, next) {
   res.json(addPlayerResponse)
 })
 
-app.post('/start', function (req, res, next) {
-  var payload = JSON.parse(req.body)
-  game.startNextPhase()
+app.get('/', function (req, res, next) {
+  res.sendFile(path.join(__dirname+'/public/play.html'))
 })
 
-app.get('/', function (req, res, next) {
-  res.json("test")
+// Event Stream
+app.get('/start', function (req, res, next) {
+  res.set({
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache",
+    "Connection": "keep-alive",
+    "Access-Control-Allow-Origin": "*"
+  });
+
+  res.write('data: 10000\n\n')
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
