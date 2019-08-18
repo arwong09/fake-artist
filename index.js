@@ -1,3 +1,6 @@
+// rxjs
+var Rx = require('rxjs/Rx')
+var subject = new Rx.Subject()
 /*
  *  Classes
  */
@@ -59,11 +62,16 @@ class User {
 var express = require('express'),
   path = require('path'),
   app = express(),
+  bodyParser = require('body-parser'),
   port = 3000
 
-app.use(express.json()) // for parsing application/json
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
 
-// var game = new Game()
+// parse application/json
+app.use(bodyParser.json())
+
+var game = new Game()
 
 // Routes
 app.post('/join', function (req, res, next) {
@@ -72,12 +80,13 @@ app.post('/join', function (req, res, next) {
     return
   }
 
-  var payload = JSON.parse(req.body)
+  console.log(req.body.username)
 
-  var newPlayer = new User(payload.username)
+  var newPlayer = new User(req.body.username)
   var addPlayerResponse = game.addPlayer(newPlayer)
 
-  res.json(addPlayerResponse)
+  // res.json(addPlayerResponse)
+  subject.next(newPlayer.username)
 })
 
 app.get('/', function (req, res, next) {
@@ -93,7 +102,9 @@ app.get('/start', function (req, res, next) {
     "Access-Control-Allow-Origin": "*"
   });
 
-  res.write('data: 10000\n\n')
+  subject.subscribe({
+    next: (username) => res.write('data: ' + username + '\n\n')
+  })
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

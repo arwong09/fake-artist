@@ -3,8 +3,33 @@
     <head>
     </head>
     <body>
-        <div id="serverData">Here is where the server sent data will appear</div>
+        <div id="players"></div>
+        <form id="form" action="/join" method="post" enctype="application/x-www-form-urlencoded">
+            <label>
+                Your username:
+                <input id="input" type="text" name="username">
+            </label>
+            <button type="submit">submit</button>
+        </form>
+
         <script type="text/javascript">
+          let form = document.getElementById("form")
+          form.addEventListener("submit", formSubmit)
+
+          function formSubmit(event) {
+            let value = document.getElementById("input").value
+            console.log(event.target)
+            fetch('/join', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                // 'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              body: JSON.stringify({ "username": value })
+            })
+            event.preventDefault();
+          }
+
           //check for browser support
           if(typeof(EventSource) === "undefined") {
             document.getElementById("serverData").innerHTML="Whoops! Your browser doesn't receive server-sent events."
@@ -13,7 +38,7 @@
 
             eventSource.onmessage = function(event) {
               console.log("message received")
-              document.getElementById("serverData").innerHTML = event.data
+              document.getElementById("players").innerHTML = event.data
             }
           }
         </script>
