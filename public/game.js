@@ -3,6 +3,7 @@ module.exports = class Game {
     this.players = {}
     this.phase = 0
     this.host = null
+    this.topics = {}
     this.wordmaster = null
   }
 
@@ -27,6 +28,13 @@ module.exports = class Game {
     }
   }
 
+  addTopic(username, topic) {
+    this.topics[username] = topic
+    if (Object.keys(this.topics).length == this.players.length) {
+      this.phase = 2
+    }
+  }
+
   selectWordmaster() {
     var randomIndex = Math.floor(Math.random(0) * this.players.length)
     var selectedUsername = Object.keys(this.players)[this.players[randomIndex]]
@@ -36,5 +44,9 @@ module.exports = class Game {
   startNextPhase() {
     this.phase = 1
     this.selectWordmaster()
+  }
+
+  startSourcePhase() {
+    this.phase = 1
   }
 }

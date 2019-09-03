@@ -36,8 +36,16 @@
             var eventSource = new EventSource("http://localhost:3000/start")
 
             eventSource.onmessage = function(event) {
-              console.log("message received")
-              document.getElementById("players").innerHTML = event.data
+              const data = JSON.parse(event.data)
+
+              switch(data.type) {
+                case 'message':
+                  document.getElementById("players").innerHTML = data.value
+                  break
+                case 'route':
+                  window.location = data.value
+                  break
+              }
             }
           }
         </script>
